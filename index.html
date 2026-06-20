@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Share Your Experience | IndiGo</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #06080F;
+      --card: #0D1221;
+      --surface: #111827;
+      --indigo: #4F46E5;
+      --indigo-light: #6366F1;
+      --sky: #38BDF8;
+      --text: #F1F5F9;
+      --muted: #64748B;
+      --border: #1E293B;
+      --success: #22C55E;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      overflow-x: hidden;
+    }
+
+    /* Ambient glow */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(79,70,229,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Floating dots */
+    .bg-dots {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    }
+    .dot {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(99,102,241,0.6);
+      animation: float var(--d) var(--delay) infinite ease-in-out alternate;
+    }
+    @keyframes float {
+      from { transform: translateY(0) scale(1); opacity: 0.15; }
+      to   { transform: translateY(-18px) scale(1.4); opacity: 0.45; }
+    }
+
+    .card {
+      position: relative; z-index: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 44px 36px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03),
+        0 40px 80px rgba(0,0,0,0.6),
+        0 0 60px rgba(79,70,229,0.07);
+      animation: rise 0.65s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Top bar */
+    .airline-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .airline-name {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sky);
+    }
+    .boarding-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* Employee card */
+    .emp-card {
+      background: linear-gradient(135deg, #1A1040 0%, #0F172A 100%);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .emp-card::after {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(99,102,241,0.15), transparent 70%);
+    }
+    .avatar {
+      width: 58px; height: 58px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--indigo), #7C3AED);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(99,102,241,0.35);
+    }
+    .emp-info { flex: 1; }
+    .emp-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+      letter-spacing: -0.01em;
+    }
+    .emp-role {
+      font-size: 12px;
+      color: var(--sky);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .emp-dept {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* Divider */
+    .divider {
+      border: none;
+      height: 1px;
+      background: var(--border);
+      margin: 0 0 24px;
+    }
+
+    /* Message preview */
+    .msg-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .message-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      font-size: 14px;
+      line-height: 1.85;
+      color: #CBD5E1;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    .open-quote {
+      position: absolute;
+      top: -14px; left: 20px;
+      font-size: 36px;
+      color: var(--indigo-light);
+      background: var(--card);
+      padding: 0 6px;
+      line-height: 1;
+      font-family: Georgia, serif;
+    }
+
+    /* Send button */
+    .send-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--indigo), #7C3AED);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 17px;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+      box-shadow: 0 6px 24px rgba(79,70,229,0.4);
+    }
+    .send-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(79,70,229,0.55);
+    }
+    .send-btn:active { transform: translateY(0); }
+    .send-icon { font-size: 18px; }
+
+    /* Success state */
+    .success-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding-top: 8px;
+      animation: rise 0.5s ease both;
+    }
+    .success-state.show { display: flex; }
+    .success-icon { font-size: 52px; }
+    .success-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--success);
+    }
+    .success-sub {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 11px;
+      color: #1E293B;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-dots" id="bgDots"></div>
+
+<div class="card">
+
+  <hr class="divider"/>
+
+  <div class="msg-label">Your Message — Ready to Send</div>
+  <div class="message-box">
+    <span class="open-quote">"</span>
+    <span id="msgText"></span>
+  </div>
+
+  <div id="sendSection">
+    <button class="send-btn" onclick="sendFeedback()">
+      <span class="send-icon">📩</span>
+      <span>Send Feedback</span>
+    </button>
+  </div>
+
+  <div class="success-state" id="successState">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Feedback Sent!</div>
+    <div class="success-sub">Thank you for recognizing Samirah's great work.<br>Your message has been sent to IndiGo's Customer Experience team.</div>
+  </div>
+
+  <p class="footer">Your feedback goes directly to IndiGo Customer Experience</p>
+</div>
+
+<script>
+  const messages = [
+    {
+      display: `I want to take a moment to highlight the exceptional assistance I received from <strong>Samirah Aljohani</strong> at the airport.<br><br>From the moment I approached her, Samirah greeted me with a warm smile and handled everything with remarkable efficiency. She made what could have been a stressful experience completely smooth and enjoyable.<br><br>IndiGo is fortunate to have such a dedicated and caring team member. Samirah truly represents the airline's values at their best.`,
+      plain: `I want to take a moment to highlight the exceptional assistance I received from Samirah Aljohani at the airport.\n\nFrom the moment I approached her, Samirah greeted me with a warm smile and handled everything with remarkable efficiency. She made what could have been a stressful experience completely smooth and enjoyable.\n\nIndiGo is fortunate to have such a dedicated and caring team member. Samirah truly represents the airline's values at their best.`
+    },
+    {
+      display: `I am writing to commend <strong>Samirah Aljohani</strong> for the outstanding passenger service she provided during my time at the airport.<br><br>Samirah was incredibly professional, patient, and proactive in assisting me. Her positive attitude and genuine care for passengers stood out and made a lasting impression.<br><br>It is truly refreshing to encounter such excellent service. Samirah is a credit to the IndiGo team and deserves to be recognized for her hard work.`,
+      plain: `I am writing to commend Samirah Aljohani for the outstanding passenger service she provided during my time at the airport.\n\nSamirah was incredibly professional, patient, and proactive in assisting me. Her positive attitude and genuine care for passengers stood out and made a lasting impression.\n\nIt is truly refreshing to encounter such excellent service. Samirah is a credit to the IndiGo team and deserves to be recognized for her hard work.`
+    },
+    {
+      display: `I would like to express my sincere appreciation for the wonderful service provided by <strong>Samirah Aljohani</strong> from your passenger services team.<br><br>Samirah went above and beyond to ensure my airport experience was pleasant. She was attentive, knowledgeable, and handled every request with a level of care that exceeded my expectations.<br><br>Employees like Samirah are what set IndiGo apart. Please ensure she receives the recognition she truly deserves.`,
+      plain: `I would like to express my sincere appreciation for the wonderful service provided by Samirah Aljohani from your passenger services team.\n\nSamirah went above and beyond to ensure my airport experience was pleasant. She was attentive, knowledgeable, and handled every request with a level of care that exceeded my expectations.\n\nEmployees like Samirah are what set IndiGo apart. Please ensure she receives the recognition she truly deserves.`
+    },
+    {
+      display: `I had the pleasure of being assisted by <strong>Samirah Aljohani</strong> at the airport, and I felt compelled to share how impressive her service was.<br><br>Samirah demonstrated outstanding professionalism and warmth. She was quick to help, clearly knowledgeable, and made every passenger around her feel valued and well looked after.<br><br>This kind of service is rare and should be celebrated. Samirah is an excellent ambassador for IndiGo and a true asset to your team.`,
+      plain: `I had the pleasure of being assisted by Samirah Aljohani at the airport, and I felt compelled to share how impressive her service was.\n\nSamirah demonstrated outstanding professionalism and warmth. She was quick to help, clearly knowledgeable, and made every passenger around her feel valued and well looked after.\n\nThis kind of service is rare and should be celebrated. Samirah is an excellent ambassador for IndiGo and a true asset to your team.`
+    },
+    {
+      display: `I wanted to reach out and personally recognize <strong>Samirah Aljohani</strong> for delivering an exceptional passenger experience at the airport.<br><br>Samirah handled my queries with confidence and grace. Her friendly demeanor and willingness to go the extra mile made a real difference to my journey. She is clearly passionate about helping people.<br><br>IndiGo should be very proud to have Samirah on their team. She embodies what great customer service looks like.`,
+      plain: `I wanted to reach out and personally recognize Samirah Aljohani for delivering an exceptional passenger experience at the airport.\n\nSamirah handled my queries with confidence and grace. Her friendly demeanor and willingness to go the extra mile made a real difference to my journey. She is clearly passionate about helping people.\n\nIndiGo should be very proud to have Samirah on their team. She embodies what great customer service looks like.`
+    },
+    {
+      display: `It is my pleasure to write in and commend <strong>Samirah Aljohani</strong> for the superb service I experienced at the airport.<br><br>Samirah was calm, efficient, and incredibly helpful. Even during what appeared to be a busy period, she maintained a positive attitude and gave each passenger her full attention.<br><br>Her dedication to passenger welfare reflects very well on IndiGo. I sincerely hope this feedback reaches the right people so Samirah is duly acknowledged.`,
+      plain: `It is my pleasure to write in and commend Samirah Aljohani for the superb service I experienced at the airport.\n\nSamirah was calm, efficient, and incredibly helpful. Even during what appeared to be a busy period, she maintained a positive attitude and gave each passenger her full attention.\n\nHer dedication to passenger welfare reflects very well on IndiGo. I sincerely hope this feedback reaches the right people so Samirah is duly acknowledged.`
+    },
+    {
+      display: `I am reaching out to share my extremely positive experience with <strong>Samirah Aljohani</strong>, a member of your passenger services team at the airport.<br><br>Samirah assisted me with such professionalism and ease that I was genuinely impressed. She was approachable, thorough, and ensured everything was taken care of without any hassle.<br><br>Great service starts with great people, and Samirah is undoubtedly one of them. She is a wonderful representative of the IndiGo brand.`,
+      plain: `I am reaching out to share my extremely positive experience with Samirah Aljohani, a member of your passenger services team at the airport.\n\nSamirah assisted me with such professionalism and ease that I was genuinely impressed. She was approachable, thorough, and ensured everything was taken care of without any hassle.\n\nGreat service starts with great people, and Samirah is undoubtedly one of them. She is a wonderful representative of the IndiGo brand.`
+    },
+    {
+      display: `I would like to take this opportunity to recognize <strong>Samirah Aljohani</strong> for the remarkable service she provided during my airport experience with IndiGo.<br><br>Samirah's professionalism was evident from the start. She was courteous, solution-focused, and made me feel like a valued passenger throughout our interaction.<br><br>It is employees like Samirah who make passengers choose IndiGo again and again. She is a shining example of excellence in customer care.`,
+      plain: `I would like to take this opportunity to recognize Samirah Aljohani for the remarkable service she provided during my airport experience with IndiGo.\n\nSamirah's professionalism was evident from the start. She was courteous, solution-focused, and made me feel like a valued passenger throughout our interaction.\n\nIt is employees like Samirah who make passengers choose IndiGo again and again. She is a shining example of excellence in customer care.`
+    }
+  ];
+
+  // Pick random message on page load
+  const chosen = messages[Math.floor(Math.random() * messages.length)];
+  document.getElementById('msgText').innerHTML = chosen.display;
+
+  // Floating dots
+  const container = document.getElementById('bgDots');
+  for (let i = 0; i < 30; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    const size = Math.random() * 4 + 2;
+    d.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random()*100}%; left:${Math.random()*100}%;
+      --d:${(Math.random()*3+2).toFixed(1)}s;
+      --delay:-${(Math.random()*4).toFixed(1)}s;
+    `;
+    container.appendChild(d);
+  }
+
+  function sendFeedback() {
+    const to      = "Customer.experience@goindigo.in";
+    const subject = encodeURIComponent("Passenger Commendation – Samirah Aljohani | Passenger Services");
+    const body    = encodeURIComponent(
+      "Dear IndiGo Customer Experience Team,\n\n" +
+      chosen.plain +
+      "\n\nBest regards,\nA Grateful Passenger"
+    );
+
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+
+    setTimeout(() => {
+      document.getElementById('sendSection').style.display = 'none';
+      document.getElementById('successState').classList.add('show');
+    }, 700);
+  }
+</script>
+
+</body>
+</html>
